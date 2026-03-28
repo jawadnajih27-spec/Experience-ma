@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Static E-com Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d1117;--ink2:#21262d;--ink3:#30363d;
+  --muted:#6e7681;--border:#30363d;
+  --surface:#161b22;--surface2:#0d1117;
+  --green:#3fb950;--green2:#238636;
+  --blue:#58a6ff;--orange:#f78166;
+  --yellow:#e3b341;--purple:#bc8cff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Noto Kufi Arabic',sans-serif;background:var(--surface2);color:#c9d1d9;line-height:1.6}
+
+/* ── LAYOUT ── */
+.shell{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:260px;flex-shrink:0;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto}
+.main-area{flex:1;overflow-y:auto;background:var(--surface2)}
+
+/* ── SIDEBAR ── */
+.sidebar-brand{padding:1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem}
+.brand-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--green),#1f6feb);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.brand-name{font-weight:900;font-size:1rem;color:#e6edf3}
+.brand-ver{font-size:.7rem;color:var(--muted);margin-top:-.15rem}
+
+.nav-section{padding:.75rem .75rem .25rem;font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.nav-item{display:flex;align-items:center;gap:.75rem;padding:.65rem 1rem;margin:.1rem .5rem;border-radius:8px;cursor:pointer;transition:.2s;font-size:.88rem;color:#c9d1d9;border:none;background:none;width:calc(100% - 1rem);text-align:right;font-family:inherit}
+.nav-item:hover{background:rgba(255,255,255,.06);color:#e6edf3}
+.nav-item.active{background:rgba(63,185,80,.12);color:var(--green);font-weight:700}
+.nav-item .icon{font-size:1rem;width:20px;text-align:center;flex-shrink:0}
+.nav-divider{border:none;border-top:1px solid var(--border);margin:.5rem .75rem}
+
+.sidebar-footer{margin-top:auto;padding:1rem;border-top:1px solid var(--border)}
+.sidebar-footer p{font-size:.72rem;color:var(--muted);text-align:center}
+
+/* ── MAIN HEADER ── */
+.page-header{padding:1.5rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;background:var(--surface)}
+.page-title{font-size:1.2rem;font-weight:900;color:#e6edf3}
+.page-sub{font-size:.8rem;color:var(--muted);margin-top:.1rem}
+
+/* ── TABS ── */
+.tab-bar{display:flex;gap:.25rem;padding:.25rem;background:rgba(0,0,0,.3);border-radius:10px}
+.tab-btn{padding:.4rem 1rem;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;border:none;background:none;color:var(--muted);font-family:inherit;transition:.2s}
+.tab-btn.active{background:var(--surface);color:#e6edf3;box-shadow:0 1px 6px rgba(0,0,0,.4)}
+
+/* ── CONTENT SECTIONS ── */
+.content-section{display:none;padding:2rem;animation:fadeIn .3s ease}
+.content-section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── GRID ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+@media(max-width:900px){.shell{flex-direction:column}.sidebar{width:100%;height:auto;max-height:50px;overflow:hidden}.two-col,.three-col{grid-template-columns:1fr}}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.card-hd{padding:1.1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.card-title{font-size:.95rem;font-weight:800;color:#e6edf3;display:flex;align-items:center;gap:.6rem}
+.card-body{padding:1.25rem}
+
+/* ── FORM ELEMENTS ── */
+.field{margin-bottom:1.1rem}
+.field label{display:block;font-size:.8rem;font-weight:700;color:#8b949e;margin-bottom:.45rem;letter-spacing:.02em}
+.field input,.field textarea,.field select{
+  width:100%;background:var(--ink);border:1px solid var(--border);border-radius:8px;
+  padding:.65rem .9rem;font-size:.88rem;color:#e6edf3;font-family:inherit;transition:.2s;
+  outline:none;
+}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(88,166,255,.1)}
+.field textarea{min-height:80px;resize:vertical}
+.field input[type="color"]{padding:.35rem;height:44px;cursor:pointer}
+.field .hint{font-size:.74rem;color:var(--muted);margin-top:.35rem}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.25rem;border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:.2s}
+.btn:hover{filter:brightness(1.12)}
+.btn-green{background:var(--green2);color:#fff}
+.btn-blue{background:#1f6feb;color:#fff}
+.btn-red{background:#b91c1c;color:#fff}
+.btn-ghost{background:rgba(255,255,255,.06);color:#c9d1d9;border:1px solid var(--border)}
+.btn-ghost:hover{background:rgba(255,255,255,.1)}
+.btn-sm{padding:.4rem .85rem;font-size:.78rem}
+.btn-full{width:100%;justify-content:center}
+.btn:disabled{opacity:.5;cursor:not-allowed;filter:none!important}
+
+/* ── BADGE ── */
+.badge{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .65rem;border-radius:99px;font-size:.73rem;font-weight:700}
+.badge-green{background:rgba(63,185,80,.15);color:var(--green)}
+.badge-blue{background:rgba(88,166,255,.15);color:var(--blue)}
+.badge-orange{background:rgba(247,129,102,.15);color:var(--orange)}
+.badge-yellow{background:rgba(227,179,65,.15);color:var(--yellow)}
+
+/* ── STATS ── */
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem}
+.stat-val{font-size:2rem;font-weight:900;color:#e6edf3;line-height:1}
+.stat-lbl{font-size:.8rem;color:var(--muted);margin-top:.4rem}
+.stat-trend{font-size:.75rem;margin-top:.5rem}
+
+/* ── PRODUCT TABLE ── */
+.product-table{width:100%;border-collapse:collapse}
+.product-table th{padding:.65rem 1rem;text-align:right;font-size:.75rem;font-weight:700;color:var(--muted);background:rgba(0,0,0,.2);border-bottom:1px solid var(--border);letter-spacing:.05em;text-transform:uppercase}
+.product-table td{padding:.8rem 1rem;font-size:.85rem;border-bottom:1px solid rgba(48,54,61,.5);vertical-align:middle}
+.product-table tr:last-child td{border-bottom:none}
+.product-table tr:hover td{background:rgba(255,255,255,.025)}
+.product-thumb{width:44px;height:44px;border-radius:8px;object-fit:cover;border:1px solid var(--border)}
+
+/* ── COLOR PREVIEW ── */
+.color-swatch{display:flex;align-items:center;gap:.75rem}
+.swatch-box{width:48px;height:48px;border-radius:10px;border:1px solid var(--border);flex-shrink:0;transition:.3s}
+.swatch-info{font-size:.82rem}
+.swatch-name{font-weight:700;color:#e6edf3}
+.swatch-hex{font-size:.75rem;color:var(--muted);margin-top:.15rem;font-family:monospace}
+
+/* ── STORE PREVIEW ── */
+.preview-bar{background:var(--ink);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.preview-chrome{padding:.6rem 1rem;display:flex;align-items:center;gap:.75rem;border-bottom:1px solid var(--border)}
+.chrome-dots{display:flex;gap:.4rem}
+.chrome-dot{width:11px;height:11px;border-radius:50%}
+.preview-url{flex:1;background:rgba(255,255,255,.06);border-radius:5px;padding:.3rem .8rem;font-size:.75rem;color:var(--muted);font-family:monospace}
+.preview-frame{width:100%;height:400px;border:none;background:#fafafa}
+
+/* ── DEPLOY LOG ── */
+.log-box{background:var(--ink);border:1px solid var(--border);border-radius:8px;padding:1.1rem;max-height:220px;overflow-y:auto;font-family:monospace;font-size:.78rem;line-height:1.8}
+.log-line{display:flex;gap:.75rem}
+.log-time{color:var(--muted);flex-shrink:0}
+.log-info{color:#58a6ff}
+.log-success{color:var(--green)}
+.log-error{color:var(--orange)}
+.log-warn{color:var(--yellow)}
+
+/* ── PROGRESS ── */
+.progress-bar{height:6px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin:.5rem 0}
+.progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--green2),var(--green));transition:width .5s ease}
+
+/* ── TOGGLE ── */
+.toggle{position:relative;width:44px;height:24px;cursor:pointer}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--ink3);border-radius:99px;transition:.3s}
+.toggle-slider::before{content:'';position:absolute;width:18px;height:18px;right:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+.toggle input:checked+.toggle-slider{background:var(--green2)}
+.toggle input:checked+.toggle-slider::before{transform:translateX(-20px)}
+
+/* ── MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:min(560px,95vw);max-height:90vh;overflow-y:auto;animation:fadeIn .25s ease}
+.modal-hd{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:1rem;font-weight:800;color:#e6edf3}
+.modal-body{padding:1.5rem}
+.modal-foot{padding:1.1rem 1.5rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:.75rem}
+.modal-close{background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;transition:.2s;padding:.2rem;border-radius:6px}
+.modal-close:hover{color:#e6edf3;background:rgba(255,255,255,.06)}
+
+/* ── NOTIFICATION ── */
+.notif{position:fixed;top:1.5rem;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:.85rem 1.5rem;font-size:.88rem;font-weight:700;z-index:9999;box-shadow:0 12px 40px rgba(0,0,0,.5);display:flex;align-items:center;gap:.6rem;min-width:260px;animation:slideDown .3s ease}
+@keyframes slideDown{from{opacity:0;transform:translateX(-50%) translateY(-12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.notif.success{border-color:var(--green);color:var(--green)}
+.notif.error{border-color:var(--orange);color:var(--orange)}
+.notif.info{border-color:var(--blue);color:var(--blue)}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:3.5rem 1rem;color:var(--muted)}
+.empty-icon{font-size:2.5rem;margin-bottom:.75rem}
+.empty-text{font-size:.95rem;font-weight:700;color:#8b949e;margin-bottom:.35rem}
+.empty-sub{font-size:.82rem}
+
+/* ── MISC ── */
+.separator{border:none;border-top:1px solid var(--border);margin:1rem 0}
+.text-green{color:var(--green)}
+.text-blue{color:var(--blue)}
+.text-orange{color:var(--orange)}
+.text-muted{color:var(--muted)}
+.font-mono{font-family:monospace}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">🛍️</div>
+      <div>
+        <div class="brand-name">E-com Manager</div>
+        <div class="brand-ver">v1.0 — Static Store Builder</div>
+      </div>
+    </div>
+
+    <div style="padding:.5rem 0">
+      <div class="nav-section">الرئيسية</div>
+      <button class="nav-item active" onclick="showSection('dashboard',this)">
+        <span class="icon">📊</span> لوحة التحكم
+      </button>
+
+      <div class="nav-section">إعداد المتجر</div>
+      <button class="nav-item" onclick="showSection('branding',this)">
+        <span class="icon">🎨</span> الهوية البصرية
+      </button>
+      <button class="nav-item" onclick="showSection('products',this)">
+        <span class="icon">📦</span> المنتجات
+      </button>
+      <button class="nav-item" onclick="showSection('settings',this)">
+        <span class="icon">⚙️</span> الإعدادات
+      </button>
+
+      <hr class="nav-divider">
+
+      <div class="nav-section">النشر</div>
+      <button class="nav-item" onclick="showSection('preview',this)">
+        <span class="icon">👁</span> معاينة المتجر
+      </button>
+      <button class="nav-item" onclick="showSection('deploy',this)">
+        <span class="icon">🚀</span> نشر على GitHub
+      </button>
+    </div>
+
+    <div class="sidebar-footer">
+      <p>Static E-com Manager<br>جميع الحقوق محفوظة © 2024</p>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <div class="main-area">
+
+    <!-- ▸ DASHBOARD ──────────────────────────────── -->
+    <section id="sec-dashboard" class="content-section active">
+      <div class="page-header">
+        <div>
+          <div class="page-title">📊 لوحة التحكم</div>
+          <div class="page-sub">نظرة عامة على متجرك</div>
+        </div>
+        <button class="btn btn-green" onclick="showSection('deploy',document.querySelector('[onclick*=deploy]'))">
+          🚀 نشر المتجر
+        </button>
+      </div>
+      <div class="content-section active" style="padding:2rem">
+        <div class="three-col" style="margin-bottom:1.5rem">
+          <div class="stat-card">
+            <div class="stat-val" id="stat-products">0</div>
+            <div class="stat-lbl">🛍️ عدد المنتجات</div>
+            <div class="stat-trend badge badge-green" style="margin-top:.6rem">مُحدّث</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" id="stat-store-name">—</div>
+            <div class="stat-lbl">🏪 اسم المتجر</div>
+          </div>
+          <div class="stat-card">
+            <div id="stat-colors" style="display:flex;gap:.6rem;margin-bottom:.4rem">
+              <div id="swatch-primary" style="width:32px;height:32px;border-radius:8px;background:#3fb950;border:1px solid var(--border)"></div>
+              <div id="swatch-accent"  style="width:32px;height:32px;border-radius:8px;background:#58a6ff;border:1px solid var(--border)"></div>
+            </div>
+            <div class="stat-lbl">🎨 الألوان المختارة</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title">⚡ البدء السريع</div>
+          </div>
+          <div class="card-body">
+            <div style="display:flex;flex-direction:column;gap:.85rem">
+              <div class="step-item" style="display:flex;align-items:center;gap:1rem;padding:1rem;border-radius:10px;background:rgba(0,0,0,.2)">
+                <div style="width:36px;height:36px;border-radius:99px;background:rgba(63,185,80,.15);color:var(--green);font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div>
+                <div style="flex:1">
+                  <div style="font-size:.9rem;font-weight:800;color:#e6edf3">اضبط الهوية البصرية</div>
+                  <div style="font-size:.78rem;color:var(--muted)">اختر الألوان والشعار واسم المتجر</div>
+                </div>
+                <button class="btn btn-ghost btn-sm" onclick="showSection('branding',null)">انتقل ←</button>
+              </div>
+              <div class="step-item" style="display:flex;align-items:center;gap:1rem;padding:1rem;border-radius:10px;background:rgba(0,0,0,.2)">
+                <div style="width:36px;height:36px;border-radius:99px;background:rgba(88,166,255,.15);color:var(--blue);font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div>
+                <div style="flex:1">
+                  <div style="font-size:.9rem;font-weight:800;color:#e6edf3">أضف منتجاتك</div>
+                  <div style="font-size:.78rem;color:var(--muted)">أدخل بيانات كل منتج وصورته</div>
+                </div>
+                <button class="btn btn-ghost btn-sm" onclick="showSection('products',null)">انتقل ←</button>
+              </div>
+              <div class="step-item" style="display:flex;align-items:center;gap:1rem;padding:1rem;border-radius:10px;background:rgba(0,0,0,.2)">
+                <div style="width:36px;height:36px;border-radius:99px;background:rgba(227,179,65,.15);color:var(--yellow);font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div>
+                <div style="flex:1">
+                  <div style="font-size:.9rem;font-weight:800;color:#e6edf3">انشر على GitHub Pages</div>
+                  <div style="font-size:.78rem;color:var(--muted)">متجرك سيكون حياً في دقائق</div>
+                </div>
+                <button class="btn btn-ghost btn-sm" onclick="showSection('deploy',null)">انتقل ←</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ▸ BRANDING ──────────────────────────────── -->
+    <section id="sec-branding" class="content-section">
+      <div class="page-header">
+        <div>
+          <div class="page-title">🎨 الهوية البصرية</div>
+          <div class="page-sub">تحكم في ألوان وشعار متجرك</div>
+        </div>
+        <button class="btn btn-green btn-sm" onclick="saveBranding()">💾 حفظ التغييرات</button>
+      </div>
+      <div style="padding:2rem">
+        <div class="two-col">
+          <div>
+            <div class="card" style="margin-bottom:1.5rem">
+              <div class="card-hd"><div class="card-title">🎨 الألوان الأساسية</div></div>
+              <div class="card-body">
+                <div class="field">
+                  <label>اللون الرئيسي (Primary)</label>
+                  <div style="display:flex;gap:.75rem;align-items:center">
+                    <input type="color" id="primary-color" value="#3fb950" oninput="updateColorPreview()">
+                    <div>
+                      <div class="swatch-name" id="primary-name">أخضر GitHub</div>
+                      <div class="swatch-hex" id="primary-hex">#3fb950</div>
+                    </div>
+                  </div>
+                  <div class="hint">يُستخدم في: العناوين، الأسعار، روابط التنقل</div>
+                </div>
+                <div class="field">
+                  <label>لون الأزرار (Accent)</label>
+                  <div style="display:flex;gap:.75rem;align-items:center">
+                    <input type="color" id="accent-color" value="#58a6ff" oninput="updateColorPreview()">
+                    <div>
+                      <div class="swatch-name" id="accent-name">أزرق هادئ</div>
+                      <div class="swatch-hex" id="accent-hex">#58a6ff</div>
+                    </div>
+                  </div>
+                  <div class="hint">يُستخدم في: أزرار "أضف للسلة"، التفاصيل</div>
+                </div>
+
+                <hr class="separator">
+
+                <div style="font-size:.82rem;color:var(--muted);margin-bottom:.75rem;font-weight:700">ألوان جاهزة مقترحة:</div>
+                <div style="display:flex;gap:.5rem;flex-wrap:wrap" id="preset-palettes">
+                  <!-- injected by JS -->
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-hd"><div class="card-title">🏪 معلومات المتجر</div></div>
+              <div class="card-body">
+                <div class="field">
+                  <label>اسم المتجر</label>
+                  <input type="text" id="store-name" placeholder="مثال: متجر الأناقة" value="متجري الإلكتروني">
+                </div>
+                <div class="field">
+                  <label>رابط الشعار (Logo URL)</label>
+                  <input type="url" id="logo-url" placeholder="https://example.com/logo.png">
+                  <div class="hint">اترك فارغاً لعرض الاسم فقط</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card">
+              <div class="card-hd"><div class="card-title">👁 معاينة مباشرة</div></div>
+              <div class="card-body">
+                <div id="live-preview" style="border-radius:12px;overflow:hidden;border:1px solid var(--border)">
+                  <!-- mini store preview -->
+                  <div id="prev-nav" style="padding:.85rem 1rem;display:flex;align-items:center;justify-content:space-between;background:#fff;border-bottom:1px solid #f3f4f6">
+                    <span id="prev-name" style="font-weight:900;font-size:.9rem"></span>
+                    <div style="width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#f9fafb;font-size:.9rem">🛒</div>
+                  </div>
+                  <div id="prev-hero" style="padding:1.5rem;text-align:center">
+                    <div id="prev-hero-title" style="font-size:1.2rem;font-weight:900;margin-bottom:.35rem"></div>
+                    <div style="font-size:.78rem;color:#6b7280">مجموعة منتجاتنا المميزة</div>
+                  </div>
+                  <div style="padding:.5rem 1rem 1rem;display:grid;grid-template-columns:1fr 1fr;gap:.6rem">
+                    <div style="background:#fff;border:1px solid #f3f4f6;border-radius:10px;overflow:hidden">
+                      <div style="height:80px;background:#f9fafb;display:flex;align-items:center;justify-content:center;font-size:1.5rem">📱</div>
+                      <div style="padding:.6rem">
+                        <div style="font-size:.75rem;font-weight:700;color:#111;margin-bottom:.3rem">منتج تجريبي</div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;gap:.3rem">
+                          <span id="prev-price" style="font-size:.85rem;font-weight:900"></span>
+                          <button id="prev-btn" style="font-size:.68rem;padding:.25rem .6rem;border-radius:6px;border:none;cursor:pointer;font-weight:700;color:#fff">+ سلة</button>
+                        </div>
+                      </div>
+                    </div>
+                    <div style="background:#fff;border:1px solid #f3f4f6;border-radius:10px;overflow:hidden">
+                      <div style="height:80px;background:#f9fafb;display:flex;align-items:center;justify-content:center;font-size:1.5rem">👗</div>
+                      <div style="padding:.6rem">
+                        <div style="font-size:.75rem;font-weight:700;color:#111;margin-bottom:.3rem">منتج آخر</div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;gap:.3rem">
+                          <span id="prev-price2" style="font-size:.85rem;font-weight:900"></span>
+                          <button id="prev-btn2" style="font-size:.68rem;padding:.25rem .6rem;border-radius:6px;border:none;cursor:pointer;font-weight:700;color:#fff">+ سلة</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="prev-footer" style="padding:.75rem 1rem;text-align:center;border-top:1px solid #f3f4f6">
+                    <span id="prev-footer-name" style="font-size:.75rem;font-weight:700"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ▸ PRODUCTS ──────────────────────────────── -->
+    <section id="sec-products" class="content-section">
+      <div class="page-header">
+        <div>
+          <div class="page-title">📦 إدارة المنتجات</div>
+          <div class="page-sub">أضف وعدّل وحذف منتجات متجرك</div>
+        </div>
+        <div style="display:flex;gap:.75rem">
+          <button class="btn btn-ghost btn-sm" onclick="importJSON()">📥 استيراد JSON</button>
+          <button class="btn btn-ghost btn-sm" onclick="exportJSON()">📤 تصدير JSON</button>
+          <button class="btn btn-green btn-sm" onclick="openAddModal()">+ إضافة منتج</button>
+        </div>
+      </div>
+      <div style="padding:2rem">
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title">🛍️ قائمة المنتجات</div>
+            <div>
+              <input id="product-search" type="text" placeholder="بحث في المنتجات..."
+                style="background:var(--ink);border:1px solid var(--border);border-radius:8px;padding:.4rem .8rem;font-size:.82rem;color:#e6edf3;font-family:inherit;outline:none;width:200px"
+                oninput="filterTable(this.value)">
+            </div>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="product-table" id="products-table">
+              <thead>
+                <tr>
+                  <th>الصورة</th>
+                  <th>اسم المنتج</th>
+                  <th>الوصف</th>
+                  <th>السعر</th>
+                  <th>الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="products-tbody">
+                <!-- injected by JS -->
+              </tbody>
+            </table>
+            <div id="products-empty" class="empty-state hidden">
+              <div class="empty-icon">📦</div>
+              <div class="empty-text">لا توجد منتجات بعد</div>
+              <div class="empty-sub">اضغط "+ إضافة منتج" للبدء</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ▸ SETTINGS ──────────────────────────────── -->
+    <section id="sec-settings" class="content-section">
+      <div class="page-header">
+        <div>
+          <div class="page-title">⚙️ الإعدادات</div>
+          <div class="page-sub">واتساب، العملة والخيارات العامة</div>
+        </div>
+        <button class="btn btn-green btn-sm" onclick="saveSettings()">💾 حفظ</button>
+      </div>
+      <div style="padding:2rem">
+        <div class="two-col">
+          <div class="card">
+            <div class="card-hd"><div class="card-title">📱 واتساب الطلبات</div></div>
+            <div class="card-body">
+              <div class="field">
+                <label>رقم الواتساب (مع رمز الدولة)</label>
+                <input type="tel" id="whatsapp-num" placeholder="مثال: 212600000000" value="">
+                <div class="hint">بدون + أو مسافات — مثال: 212600123456</div>
+              </div>
+              <div class="field">
+                <label>رمز العملة</label>
+                <input type="text" id="currency-code" placeholder="درهم / ريال / دينار" value="درهم" maxlength="10">
+              </div>
+              <div style="background:rgba(63,185,80,.06);border:1px solid rgba(63,185,80,.2);border-radius:8px;padding:.85rem;font-size:.8rem;color:#8b949e;line-height:1.7">
+                💬 عند إتمام الطلب، سيتلقى هذا الرقم رسالة واتساب تحتوي على تفاصيل السلة كاملة تلقائياً.
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hd"><div class="card-title">⚡ خيارات المتجر</div></div>
+            <div class="card-body">
+              <div class="field">
+                <label>لغة المتجر</label>
+                <select id="store-lang" style="background:var(--ink);border:1px solid var(--border);border-radius:8px;padding:.65rem .9rem;font-size:.88rem;color:#e6edf3;font-family:inherit;width:100%;outline:none">
+                  <option value="ar" selected>العربية (RTL)</option>
+                  <option value="fr">Français</option>
+                  <option value="en">English</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>وصف المتجر (للـ SEO)</label>
+                <textarea id="store-desc" placeholder="وصف مختصر لمتجرك يظهر في نتائج البحث..."></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:1.5rem">
+          <div class="card-hd"><div class="card-title text-orange">⚠️ منطقة الخطر</div></div>
+          <div class="card-body" style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+            <div>
+              <div style="font-size:.88rem;font-weight:700;color:#e6edf3">مسح كل البيانات</div>
+              <div style="font-size:.78rem;color:var(--muted)">سيتم حذف جميع المنتجات والإعدادات — لا يمكن التراجع</div>
+            </div>
+            <button class="btn btn-red btn-sm" onclick="clearAllData()">🗑 مسح الكل</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ▸ PREVIEW ──────────────────────────────── -->
+    <section id="sec-preview" class="content-section">
+      <div class="page-header">
+        <div>
+          <div class="page-title">👁 معاينة المتجر</div>
+          <div class="page-sub">شاهد متجرك قبل النشر</div>
+        </div>
+        <button class="btn btn-blue btn-sm" onclick="generatePreview()">🔄 تحديث المعاينة</button>
+      </div>
+      <div style="padding:2rem">
+        <div class="preview-bar">
+          <div class="preview-chrome">
+            <div class="chrome-dots">
+              <div class="chrome-dot" style="background:#ef4444"></div>
+              <div class="chrome-dot" style="background:#f59e0b"></div>
+              <div class="chrome-dot" style="background:#22c55e"></div>
+            </div>
+            <div class="preview-url" id="preview-url-bar">معاينة المتجر</div>
+          </div>
+          <iframe id="store-preview-frame" class="preview-frame" srcdoc="<div style='display:flex;align-items:center;justify-content:center;height:400px;font-family:sans-serif;color:#666'>اضغط &quot;تحديث المعاينة&quot; لمشاهدة متجرك</div>"></iframe>
+        </div>
+        <div style="margin-top:1rem;font-size:.8rem;color:var(--muted);text-align:center">
+          💡 المعاينة تعكس آخر تغييراتك المحفوظة
+        </div>
+      </div>
+    </section>
+
+    <!-- ▸ DEPLOY ──────────────────────────────── -->
+    <section id="sec-deploy" class="content-section">
+      <div class="page-header">
+        <div>
+          <div class="page-title">🚀 النشر على GitHub Pages</div>
+          <div class="page-sub">انشر متجرك بضغطة زر واحدة</div>
+        </div>
+      </div>
+      <div style="padding:2rem">
+        <div class="two-col">
+          <div>
+            <div class="card" style="margin-bottom:1.5rem">
+              <div class="card-hd"><div class="card-title">🔑 بيانات GitHub</div></div>
+              <div class="card-body">
+                <div class="field">
+                  <label>GitHub Personal Access Token</label>
+                  <input type="password" id="github-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+                  <div class="hint">
+                    احصل على Token من: GitHub → Settings → Developer settings → Personal access tokens<br>
+                    الصلاحيات المطلوبة: <span class="badge badge-blue">repo</span>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>اسم المستودع (Repository Name)</label>
+                  <input type="text" id="repo-name" placeholder="my-store" value="">
+                  <div class="hint">سيكون رابط متجرك: <span class="font-mono text-green" id="store-url-preview">username.github.io/my-store</span></div>
+                </div>
+                <div class="field">
+                  <label>GitHub Username</label>
+                  <input type="text" id="github-username" placeholder="your-username" oninput="updateStoreUrlPreview()">
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-hd"><div class="card-title">📋 ملخص ما سيُرفع</div></div>
+              <div class="card-body" id="deploy-summary">
+                <!-- injected by JS -->
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card" style="margin-bottom:1.5rem">
+              <div class="card-hd">
+                <div class="card-title">🚦 حالة النشر</div>
+                <div id="deploy-status-badge" class="badge badge-yellow">جاهز</div>
+              </div>
+              <div class="card-body">
+                <div class="progress-bar" style="margin-bottom:1rem">
+                  <div id="deploy-progress" class="progress-fill" style="width:0%"></div>
+                </div>
+                <div class="log-box" id="deploy-log">
+                  <div class="log-line">
+                    <span class="log-time">--:--</span>
+                    <span class="log-info">⏳ في انتظار بدء عملية النشر...</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button id="deploy-btn" class="btn btn-green btn-full"
+              style="padding:1rem;font-size:1rem;border-radius:12px"
+              onclick="deployToGitHub()">
+              🚀 ابدأ النشر الآن
+            </button>
+
+            <div id="success-box" class="hidden" style="margin-top:1rem;background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.3);border-radius:12px;padding:1.25rem;text-align:center">
+              <div style="font-size:2rem;margin-bottom:.5rem">🎉</div>
+              <div style="font-weight:900;color:var(--green);font-size:1rem;margin-bottom:.35rem">تم النشر بنجاح!</div>
+              <div style="font-size:.82rem;color:var(--muted);margin-bottom:.85rem">متجرك حيّ الآن على الإنترنت</div>
+              <a id="store-live-link" href="#" target="_blank"
+                class="btn btn-green btn-sm" style="display:inline-flex">
+                🌐 زيارة المتجر
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- README SECTION -->
+        <div class="card" style="margin-top:1.5rem">
+          <div class="card-hd">
+            <div class="card-title">📖 دليل الاستخدام (README)</div>
+            <button class="btn btn-ghost btn-sm" onclick="copyReadme()">📋 نسخ</button>
+          </div>
+          <div class="card-body">
+            <pre id="readme-content" style="font-family:monospace;font-size:.78rem;color:#8b949e;line-height:1.7;white-space:pre-wrap;background:rgba(0,0,0,.3);padding:1rem;border-radius:8px;overflow-y:auto;max-height:200px"></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /main-area -->
+</div><!-- /shell -->
+
+<!-- ── ADD/EDIT PRODUCT MODAL ── -->
+<div id="product-modal" class="modal-bg">
+  <div class="modal-box">
+    <div class="modal-hd">
+      <div class="modal-title" id="modal-mode-title">➕ إضافة منتج جديد</div>
+      <button class="modal-close" onclick="closeProductModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-product-id" value="">
+      <div class="field">
+        <label>اسم المنتج *</label>
+        <input type="text" id="p-name" placeholder="مثال: سماعات لاسلكية فاخرة">
+      </div>
+      <div class="field">
+        <label>وصف المنتج</label>
+        <textarea id="p-desc" placeholder="وصف مختصر وجذاب للمنتج..."></textarea>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="field">
+          <label>السعر *</label>
+          <input type="number" id="p-price" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="field">
+          <label>الكمية المتاحة</label>
+          <input type="number" id="p-stock" placeholder="99" min="0" value="99">
+        </div>
+      </div>
+      <div class="field">
+        <label>رابط الصورة *</label>
+        <input type="url" id="p-image" placeholder="https://example.com/product.jpg" oninput="previewProductImage()">
+        <div class="hint">استخدم صورة بدقة 400×400 على الأقل</div>
+      </div>
+      <div id="img-preview-wrap" style="display:none;margin-top:.75rem">
+        <img id="img-preview" style="width:100%;max-height:160px;object-fit:cover;border-radius:10px;border:1px solid var(--border)">
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeProductModal()">إلغاء</button>
+      <button class="btn btn-green" onclick="saveProduct()">💾 حفظ المنتج</button>
+    </div>
+  </div>
+</div>
+
+<script src="manager.js"></script>
+</body>
+</html>

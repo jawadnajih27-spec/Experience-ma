@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>__STORE_NAME__</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: __PRIMARY_COLOR__;
+    --accent: __ACCENT_COLOR__;
+    --primary-light: __PRIMARY_LIGHT__;
+    --accent-light: __ACCENT_LIGHT__;
+  }
+  * { font-family: 'Noto Kufi Arabic', sans-serif; }
+  body { background: #fafafa; }
+
+  .btn-primary {
+    background: var(--primary);
+    color: #fff;
+    transition: all .25s;
+  }
+  .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+  .btn-accent {
+    background: var(--accent);
+    color: #fff;
+    transition: all .25s;
+  }
+  .btn-accent:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+  .badge-primary {
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+
+  .card-hover {
+    transition: all .3s cubic-bezier(.4,0,.2,1);
+  }
+  .card-hover:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 48px rgba(0,0,0,.12);
+  }
+
+  .nav-brand { color: var(--primary); }
+
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.55);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .cart-sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 100%;
+    width: min(420px, 100vw);
+    background: #fff;
+    z-index: 999;
+    transform: translateX(-100%);
+    transition: transform .35s cubic-bezier(.4,0,.2,1);
+    box-shadow: 4px 0 32px rgba(0,0,0,.15);
+  }
+  .cart-sidebar.open { transform: translateX(0); }
+
+  .cart-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.4);
+    z-index: 998;
+  }
+  .cart-overlay.open { display: block; }
+
+  .badge-count {
+    background: var(--accent);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 99px;
+    padding: 1px 6px;
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  .product-img {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    width: 100%;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .star { color: #f59e0b; }
+
+  .whatsapp-btn {
+    background: #25D366;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    transition: all .25s;
+  }
+  .whatsapp-btn:hover { background: #128C7E; transform: translateY(-1px); }
+
+  .qty-btn {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+    border: 1.5px solid #e5e7eb;
+    cursor: pointer;
+    transition: .2s;
+    font-size: 1rem;
+    font-weight: 700;
+    user-select: none;
+  }
+  .qty-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .animate-up { animation: slideUp .4s ease forwards; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- ── NAV ── -->
+<header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-100 shadow-sm">
+  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <img id="store-logo" src="__LOGO_URL__" alt="logo"
+        class="h-9 w-9 rounded-xl object-cover"
+        onerror="this.style.display='none'">
+      <span class="font-black text-xl nav-brand">__STORE_NAME__</span>
+    </div>
+
+    <div class="flex-1 max-w-sm">
+      <input id="search-input" type="text" placeholder="ابحث عن منتج..."
+        class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm
+               focus:outline-none focus:border-gray-400 transition">
+    </div>
+
+    <button onclick="openCart()" class="relative p-2.5 rounded-xl hover:bg-gray-50 transition">
+      <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+      </svg>
+      <span id="cart-count" class="badge-count hidden">0</span>
+    </button>
+  </div>
+</header>
+
+<!-- ── HERO BANNER ── -->
+<section class="py-14 px-4 text-center"
+  style="background: linear-gradient(135deg, var(--primary-light) 0%, #fff 60%)">
+  <p class="text-xs font-semibold tracking-widest uppercase mb-3 opacity-60">مرحباً بك في</p>
+  <h1 class="text-4xl md:text-5xl font-black mb-4" style="color: var(--primary)">
+    __STORE_NAME__
+  </h1>
+  <p class="text-gray-500 max-w-md mx-auto text-sm leading-relaxed">
+    اكتشف مجموعتنا المختارة من المنتجات المميزة — جودة استثنائية بأسعار تنافسية.
+  </p>
+</section>
+
+<!-- ── PRODUCTS GRID ── -->
+<main class="max-w-6xl mx-auto px-4 py-12">
+  <div class="flex items-center justify-between mb-8">
+    <h2 class="text-2xl font-black text-gray-900">المنتجات</h2>
+    <span id="products-count" class="text-sm text-gray-400"></span>
+  </div>
+
+  <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+    <!-- injected by JS -->
+  </div>
+
+  <div id="no-results" class="hidden text-center py-20 text-gray-400">
+    <div class="text-5xl mb-4">🔍</div>
+    <p class="font-semibold">لا توجد منتجات مطابقة</p>
+  </div>
+</main>
+
+<!-- ── PRODUCT MODAL ── -->
+<div id="product-modal" class="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="bg-white rounded-2xl w-full max-w-xl mx-4 overflow-hidden shadow-2xl animate-up">
+    <div class="relative">
+      <img id="modal-img" src="" alt="" class="w-full h-64 object-cover">
+      <button onclick="closeModal()"
+        class="absolute top-3 left-3 bg-black/40 hover:bg-black/60 text-white
+               w-9 h-9 rounded-xl flex items-center justify-center transition text-lg font-bold">
+        ✕
+      </button>
+    </div>
+    <div class="p-6">
+      <div class="flex items-start justify-between gap-3 mb-3">
+        <h3 id="modal-name" class="text-xl font-black text-gray-900"></h3>
+        <div class="stars flex gap-0.5">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span>
+          <span class="star">★</span><span class="star text-gray-200">★</span>
+        </div>
+      </div>
+      <p id="modal-desc" class="text-gray-500 text-sm leading-relaxed mb-5"></p>
+      <div class="flex items-center justify-between">
+        <span id="modal-price" class="text-2xl font-black" style="color: var(--primary)"></span>
+        <div class="flex gap-2">
+          <button id="modal-add-btn" onclick="addToCartFromModal()"
+            class="btn-accent font-bold px-5 py-2.5 rounded-xl text-sm">
+            + أضف للسلة
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CART SIDEBAR ── -->
+<div id="cart-overlay" class="cart-overlay" onclick="closeCart()"></div>
+<aside id="cart-sidebar" class="cart-sidebar flex flex-col">
+  <div class="flex items-center justify-between p-5 border-b border-gray-100">
+    <h2 class="font-black text-lg text-gray-900">سلة التسوق 🛒</h2>
+    <button onclick="closeCart()" class="text-gray-400 hover:text-gray-700 text-xl font-bold transition">✕</button>
+  </div>
+
+  <div id="cart-items" class="flex-1 overflow-y-auto p-5 space-y-4">
+    <!-- cart items -->
+  </div>
+
+  <div id="cart-empty" class="flex-1 flex flex-col items-center justify-center text-gray-400 p-10 hidden">
+    <div class="text-5xl mb-4">🛍️</div>
+    <p class="font-semibold text-center">سلتك فارغة<br><span class="font-normal text-sm">ابدأ بإضافة منتجات</span></p>
+  </div>
+
+  <div id="cart-footer" class="p-5 border-t border-gray-100 space-y-4 hidden">
+    <div class="flex justify-between font-black text-lg">
+      <span>الإجمالي</span>
+      <span id="cart-total" style="color: var(--primary)"></span>
+    </div>
+    <button onclick="checkoutWhatsApp()"
+      class="whatsapp-btn w-full py-3.5 rounded-xl font-bold text-base justify-center">
+      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+      </svg>
+      إتمام الطلب عبر واتساب
+    </button>
+    <button onclick="clearCart()" class="w-full py-2.5 rounded-xl border border-gray-200 text-sm text-gray-500 hover:bg-gray-50 transition font-semibold">
+      إفراغ السلة
+    </button>
+  </div>
+</aside>
+
+<!-- ── FOOTER ── -->
+<footer class="mt-20 py-10 border-t border-gray-100 text-center">
+  <p class="font-black text-lg mb-1" style="color: var(--primary)">__STORE_NAME__</p>
+  <p class="text-gray-400 text-sm">جميع الحقوق محفوظة © 2024 — متجر مبني بـ Static E-com Manager</p>
+</footer>
+
+<!-- ── DATA & LOGIC ── -->
+<script>
+const STORE_CONFIG = {
+  name: "__STORE_NAME__",
+  whatsapp: "__WHATSAPP__",
+  currency: "__CURRENCY__"
+};
+
+const PRODUCTS = __PRODUCTS_JSON__;
+
+let cart = JSON.parse(localStorage.getItem('cart_data') || '[]');
+let currentModalProduct = null;
+
+// ── RENDER PRODUCTS ──
+function renderProducts(list) {
+  const grid = document.getElementById('products-grid');
+  const noRes = document.getElementById('no-results');
+  const count = document.getElementById('products-count');
+
+  if (!list.length) {
+    grid.innerHTML = '';
+    noRes.classList.remove('hidden');
+    count.textContent = '';
+    return;
+  }
+  noRes.classList.add('hidden');
+  count.textContent = `${list.length} منتج`;
+
+  grid.innerHTML = list.map((p, i) => `
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden card-hover cursor-pointer animate-up"
+      style="animation-delay: ${i * 60}ms"
+      onclick="openModal(${p.id})">
+      <img src="${p.image}" alt="${p.name}"
+        class="product-img"
+        onerror="this.src='https://placehold.co/400x400/f3f4f6/9ca3af?text=📦'">
+      <div class="p-4">
+        <h3 class="font-bold text-gray-900 text-sm leading-snug mb-1 line-clamp-2">${p.name}</h3>
+        <p class="text-xs text-gray-400 line-clamp-2 mb-3 leading-relaxed">${p.description}</p>
+        <div class="flex items-center justify-between gap-2">
+          <span class="font-black text-base" style="color:var(--primary)">${p.price} ${STORE_CONFIG.currency}</span>
+          <button onclick="event.stopPropagation(); quickAdd(${p.id})"
+            class="btn-accent text-xs font-bold px-3 py-1.5 rounded-lg whitespace-nowrap">
+            + سلة
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── MODAL ──
+function openModal(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  currentModalProduct = p;
+  document.getElementById('modal-img').src = p.image;
+  document.getElementById('modal-img').onerror = function() {
+    this.src = 'https://placehold.co/600x400/f3f4f6/9ca3af?text=📦';
+  };
+  document.getElementById('modal-name').textContent = p.name;
+  document.getElementById('modal-desc').textContent = p.description;
+  document.getElementById('modal-price').textContent = `${p.price} ${STORE_CONFIG.currency}`;
+  document.getElementById('product-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('product-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeModalOutside(e) {
+  if (e.target.id === 'product-modal') closeModal();
+}
+function addToCartFromModal() {
+  if (currentModalProduct) {
+    addToCart(currentModalProduct.id);
+    closeModal();
+  }
+}
+
+// ── CART ──
+function addToCart(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  const existing = cart.find(x => x.id === id);
+  if (existing) {
+    existing.qty++;
+  } else {
+    cart.push({ id, name: p.name, price: p.price, image: p.image, qty: 1 });
+  }
+  saveCart();
+  updateCartUI();
+  showToast(`✅ أُضيف: ${p.name}`);
+}
+function quickAdd(id) { addToCart(id); }
+
+function removeFromCart(id) {
+  cart = cart.filter(x => x.id !== id);
+  saveCart(); updateCartUI(); renderCartItems();
+}
+function changeQty(id, delta) {
+  const item = cart.find(x => x.id === id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) removeFromCart(id);
+  else { saveCart(); updateCartUI(); renderCartItems(); }
+}
+function clearCart() {
+  cart = []; saveCart(); updateCartUI(); renderCartItems();
+}
+function saveCart() {
+  localStorage.setItem('cart_data', JSON.stringify(cart));
+}
+function updateCartUI() {
+  const total = cart.reduce((s, x) => s + x.qty, 0);
+  const badge = document.getElementById('cart-count');
+  badge.textContent = total;
+  total > 0 ? badge.classList.remove('hidden') : badge.classList.add('hidden');
+}
+function renderCartItems() {
+  const container = document.getElementById('cart-items');
+  const empty = document.getElementById('cart-empty');
+  const footer = document.getElementById('cart-footer');
+  const totalEl = document.getElementById('cart-total');
+
+  if (!cart.length) {
+    container.classList.add('hidden');
+    empty.classList.remove('hidden');
+    footer.classList.add('hidden');
+    return;
+  }
+  container.classList.remove('hidden');
+  empty.classList.add('hidden');
+  footer.classList.remove('hidden');
+
+  const total = cart.reduce((s, x) => s + x.price * x.qty, 0);
+  totalEl.textContent = `${total.toFixed(2)} ${STORE_CONFIG.currency}`;
+
+  container.innerHTML = cart.map(item => `
+    <div class="flex gap-3 items-center bg-gray-50 rounded-2xl p-3">
+      <img src="${item.image}" alt="${item.name}"
+        class="w-16 h-16 rounded-xl object-cover flex-shrink-0"
+        onerror="this.src='https://placehold.co/100x100/f3f4f6/9ca3af?text=📦'">
+      <div class="flex-1 min-w-0">
+        <p class="font-bold text-sm text-gray-900 leading-snug mb-1 truncate">${item.name}</p>
+        <p class="text-xs font-black" style="color:var(--primary)">${(item.price * item.qty).toFixed(2)} ${STORE_CONFIG.currency}</p>
+      </div>
+      <div class="flex flex-col items-center gap-1.5 flex-shrink-0">
+        <div class="flex items-center gap-1.5">
+          <span class="qty-btn" onclick="changeQty(${item.id}, -1)">−</span>
+          <span class="w-6 text-center font-bold text-sm">${item.qty}</span>
+          <span class="qty-btn" onclick="changeQty(${item.id}, 1)">+</span>
+        </div>
+        <button onclick="removeFromCart(${item.id})" class="text-xs text-red-400 hover:text-red-600 transition">حذف</button>
+      </div>
+    </div>
+  `).join('');
+}
+function openCart() {
+  renderCartItems();
+  document.getElementById('cart-sidebar').classList.add('open');
+  document.getElementById('cart-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeCart() {
+  document.getElementById('cart-sidebar').classList.remove('open');
+  document.getElementById('cart-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ── WHATSAPP CHECKOUT ──
+function checkoutWhatsApp() {
+  if (!cart.length) return;
+  const total = cart.reduce((s, x) => s + x.price * x.qty, 0);
+  let msg = `🛒 *طلب جديد من ${STORE_CONFIG.name}*\n\n`;
+  cart.forEach(item => {
+    msg += `• ${item.name} × ${item.qty} — ${(item.price * item.qty).toFixed(2)} ${STORE_CONFIG.currency}\n`;
+  });
+  msg += `\n💰 *الإجمالي: ${total.toFixed(2)} ${STORE_CONFIG.currency}*\n\nأرجو تأكيد الطلب، شكراً! 🙏`;
+  const phone = STORE_CONFIG.whatsapp.replace(/[^0-9]/g, '');
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+// ── SEARCH ──
+document.getElementById('search-input').addEventListener('input', function() {
+  const q = this.value.trim().toLowerCase();
+  const filtered = q ? PRODUCTS.filter(p =>
+    p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q)
+  ) : PRODUCTS;
+  renderProducts(filtered);
+});
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'fixed bottom-6 right-6 z-[9999] text-white text-sm font-bold px-5 py-3 rounded-2xl shadow-xl animate-up';
+  t.style.background = 'var(--primary)';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2200);
+}
+
+// ── INIT ──
+renderProducts(PRODUCTS);
+updateCartUI();
+</script>
+</body>
+</html>
