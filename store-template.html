@@ -6,52 +6,92 @@
 <title>__STORE_NAME__</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Kufi+Arabic:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
     --primary: __PRIMARY_COLOR__;
     --accent: __ACCENT_COLOR__;
     --primary-light: __PRIMARY_LIGHT__;
     --accent-light: __ACCENT_LIGHT__;
+    --ink: #0b1020;
+    --muted: #6b7280;
   }
-  * { font-family: 'Noto Kufi Arabic', sans-serif; }
-  body { background: #fafafa; }
 
-  .btn-primary {
-    background: var(--primary);
-    color: #fff;
-    transition: all .25s;
+  * { font-family: 'Inter', 'Noto Kufi Arabic', sans-serif; }
+
+  body {
+    background:
+      radial-gradient(circle at 95% 5%, var(--primary-light), transparent 32%),
+      radial-gradient(circle at 15% 88%, var(--accent-light), transparent 38%),
+      linear-gradient(180deg, #f8fafc 0%, #f1f5f9 55%, #eef2f7 100%);
+    color: var(--ink);
   }
-  .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
 
+  .glass {
+    background: rgba(255, 255, 255, .78);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, .6);
+    box-shadow: 0 18px 52px rgba(12, 18, 34, .08);
+  }
+
+  .btn-primary,
   .btn-accent {
-    background: var(--accent);
     color: #fff;
-    transition: all .25s;
+    transition: all .28s cubic-bezier(.4, 0, .2, 1);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, .14);
   }
-  .btn-accent:hover { filter: brightness(1.1); transform: translateY(-1px); }
 
-  .badge-primary {
-    background: var(--primary-light);
+  .btn-primary { background: linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--primary) 80%, #fff)); }
+  .btn-accent  { background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 80%, #fff)); }
+
+  .btn-primary:hover,
+  .btn-accent:hover {
+    transform: translateY(-2px);
+    filter: saturate(1.1);
+  }
+
+  .section-shell {
+    border: 1px solid rgba(255,255,255,.55);
+    box-shadow: 0 20px 60px rgba(2, 6, 23, .08);
+  }
+
+  .hero-chip {
+    border: 1px solid color-mix(in srgb, var(--primary) 18%, #e2e8f0);
+    background: color-mix(in srgb, var(--primary-light) 40%, #fff);
     color: var(--primary);
   }
 
-  .card-hover {
-    transition: all .3s cubic-bezier(.4,0,.2,1);
-  }
-  .card-hover:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 48px rgba(0,0,0,.12);
+  .product-card {
+    border: 1px solid rgba(148, 163, 184, .22);
+    background: rgba(255, 255, 255, .88);
+    transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease;
   }
 
-  .nav-brand { color: var(--primary); }
+  .product-card:hover {
+    transform: translateY(-7px);
+    border-color: color-mix(in srgb, var(--accent) 38%, #cbd5e1);
+    box-shadow: 0 22px 56px rgba(15, 23, 42, .12);
+  }
+
+  .product-img {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    width: 100%;
+    border-radius: 18px;
+  }
+
+  .stat-badge {
+    background: color-mix(in srgb, var(--accent-light) 55%, #fff);
+    border: 1px solid color-mix(in srgb, var(--accent) 20%, #dbeafe);
+  }
 
   .modal-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.55);
-    backdrop-filter: blur(4px);
+    background: rgba(2, 6, 23, .58);
+    backdrop-filter: blur(8px);
     z-index: 1000;
     align-items: center;
     justify-content: center;
@@ -60,14 +100,17 @@
 
   .cart-sidebar {
     position: fixed;
-    top: 0; left: 0;
+    top: 0;
+    left: 0;
     height: 100%;
     width: min(420px, 100vw);
-    background: #fff;
+    background: rgba(255,255,255,.94);
+    backdrop-filter: blur(14px);
     z-index: 999;
     transform: translateX(-100%);
     transition: transform .35s cubic-bezier(.4,0,.2,1);
-    box-shadow: 4px 0 32px rgba(0,0,0,.15);
+    box-shadow: 8px 0 50px rgba(2, 6, 23, .18);
+    border-right: 1px solid rgba(148, 163, 184, .2);
   }
   .cart-sidebar.open { transform: translateX(0); }
 
@@ -75,7 +118,7 @@
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.4);
+    background: rgba(2, 6, 23, .45);
     z-index: 998;
   }
   .cart-overlay.open { display: block; }
@@ -84,187 +127,209 @@
     background: var(--accent);
     color: #fff;
     font-size: 10px;
-    font-weight: 700;
-    border-radius: 99px;
-    padding: 1px 6px;
+    font-weight: 800;
+    border-radius: 999px;
+    padding: 1px 7px;
     position: absolute;
     top: -6px;
     right: -8px;
-    min-width: 18px;
+    min-width: 20px;
     text-align: center;
   }
 
-  .product-img {
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    width: 100%;
-    border-radius: 12px 12px 0 0;
-  }
-
-  .star { color: #f59e0b; }
-
   .whatsapp-btn {
-    background: #25D366;
+    background: linear-gradient(135deg, #25D366, #17a34a);
     color: #fff;
     display: inline-flex;
     align-items: center;
     gap: .5rem;
     transition: all .25s;
   }
-  .whatsapp-btn:hover { background: #128C7E; transform: translateY(-1px); }
+  .whatsapp-btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
 
   .qty-btn {
-    width: 32px; height: 32px;
-    display: flex; align-items: center; justify-content: center;
-    border-radius: 8px;
-    border: 1.5px solid #e5e7eb;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    border: 1.5px solid #dbe3ee;
     cursor: pointer;
     transition: .2s;
     font-size: 1rem;
     font-weight: 700;
     user-select: none;
+    background: #fff;
   }
   .qty-btn:hover { border-color: var(--primary); color: var(--primary); }
 
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
   @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
+    from { opacity: 0; transform: translateY(24px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-  .animate-up { animation: slideUp .4s ease forwards; }
+  .animate-up { animation: slideUp .45s ease forwards; }
 </style>
 </head>
 <body class="min-h-screen">
 
-<!-- ── NAV ── -->
-<header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-100 shadow-sm">
-  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
-    <div class="flex items-center gap-3">
+<header class="sticky top-0 z-50 border-b border-white/60 glass">
+  <div class="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-3 min-w-0">
       <img id="store-logo" src="__LOGO_URL__" alt="logo"
-        class="h-9 w-9 rounded-xl object-cover"
+        class="h-11 w-11 rounded-2xl object-cover border border-white/80 shadow-sm"
         onerror="this.style.display='none'">
-      <span class="font-black text-xl nav-brand">__STORE_NAME__</span>
+      <div class="min-w-0">
+        <p class="text-xs uppercase tracking-[.24em] text-slate-400">global commerce</p>
+        <h1 class="font-black text-xl md:text-2xl truncate" style="color: var(--primary)">__STORE_NAME__</h1>
+      </div>
     </div>
 
-    <div class="flex-1 max-w-sm">
-      <input id="search-input" type="text" placeholder="ابحث عن منتج..."
-        class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm
-               focus:outline-none focus:border-gray-400 transition">
+    <div class="hidden md:flex flex-1 max-w-xl">
+      <div class="relative w-full">
+        <input id="search-input" type="text" placeholder="ابحث عن منتج، فئة، أو وصف..."
+          class="w-full bg-white/85 border border-slate-200 rounded-2xl ps-12 pe-4 py-3 text-sm focus:outline-none focus:border-slate-400 shadow-sm">
+        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">🔎</span>
+      </div>
     </div>
 
-    <button onclick="openCart()" class="relative p-2.5 rounded-xl hover:bg-gray-50 transition">
-      <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <button onclick="openCart()" class="relative p-3 rounded-2xl bg-white/90 border border-slate-200 hover:bg-white transition">
+      <svg class="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
           d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
       </svg>
       <span id="cart-count" class="badge-count hidden">0</span>
     </button>
   </div>
+
+  <div class="md:hidden max-w-7xl mx-auto px-4 pb-4">
+    <input id="search-input-mobile" type="text" placeholder="ابحث بسرعة..."
+      class="w-full bg-white/90 border border-slate-200 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:border-slate-400 shadow-sm">
+  </div>
 </header>
 
-<!-- ── HERO BANNER ── -->
-<section class="py-14 px-4 text-center"
-  style="background: linear-gradient(135deg, var(--primary-light) 0%, #fff 60%)">
-  <p class="text-xs font-semibold tracking-widest uppercase mb-3 opacity-60">مرحباً بك في</p>
-  <h1 class="text-4xl md:text-5xl font-black mb-4" style="color: var(--primary)">
-    __STORE_NAME__
-  </h1>
-  <p class="text-gray-500 max-w-md mx-auto text-sm leading-relaxed">
-    اكتشف مجموعتنا المختارة من المنتجات المميزة — جودة استثنائية بأسعار تنافسية.
-  </p>
+<section class="max-w-7xl mx-auto px-4 md:px-6 pt-8 md:pt-10">
+  <div class="section-shell rounded-3xl p-6 md:p-10 bg-white/75 backdrop-blur-xl overflow-hidden relative">
+    <div class="absolute -top-20 -right-12 w-48 h-48 rounded-full" style="background: var(--primary-light)"></div>
+    <div class="absolute -bottom-24 -left-8 w-56 h-56 rounded-full" style="background: var(--accent-light)"></div>
+
+    <div class="relative z-10 grid md:grid-cols-12 gap-8 items-center">
+      <div class="md:col-span-7 space-y-4">
+        <span class="hero-chip inline-flex px-4 py-1.5 rounded-full text-xs font-bold tracking-wide">v2.0 Premium Experience</span>
+        <h2 class="text-3xl md:text-5xl font-black leading-tight text-slate-900">
+          تجربة تسوّق عالمية<br>
+          بطابع فاخر لـ <span style="color: var(--primary)">__STORE_NAME__</span>
+        </h2>
+        <p class="text-slate-600 leading-relaxed max-w-2xl text-sm md:text-base">
+          تصميم أنيق، تجربة سريعة، وسلة ذكية تحفظ اختيارات عملائك لحظة بلحظة.
+          تم بناء هذه الواجهة لتنافس أحدث المتاجر العالمية بدون تعقيد.
+        </p>
+        <div class="flex flex-wrap items-center gap-3 pt-2">
+          <span class="stat-badge rounded-xl px-3 py-2 text-xs font-bold text-slate-700">⚡ شحن مرئي سريع</span>
+          <span class="stat-badge rounded-xl px-3 py-2 text-xs font-bold text-slate-700">🔒 تجربة آمنة</span>
+          <span class="stat-badge rounded-xl px-3 py-2 text-xs font-bold text-slate-700">🌍 جاهز للتوسع العالمي</span>
+        </div>
+      </div>
+      <div class="md:col-span-5">
+        <div class="glass rounded-3xl p-5 border border-white/70">
+          <p class="text-xs text-slate-500 mb-3 font-semibold uppercase tracking-[.2em]">brand metrics</p>
+          <div class="grid grid-cols-2 gap-3 text-center">
+            <div class="bg-white rounded-2xl p-4">
+              <div class="text-2xl font-black" style="color: var(--primary)">24/7</div>
+              <div class="text-xs text-slate-500 mt-1">استجابة ذكية</div>
+            </div>
+            <div class="bg-white rounded-2xl p-4">
+              <div class="text-2xl font-black" style="color: var(--accent)">∞</div>
+              <div class="text-xs text-slate-500 mt-1">إمكانية التوسع</div>
+            </div>
+            <div class="bg-white rounded-2xl p-4 col-span-2">
+              <div class="text-xs text-slate-400 mb-1">العلامة التجارية</div>
+              <div class="font-black text-lg truncate" style="color: var(--primary)">__STORE_NAME__</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- ── PRODUCTS GRID ── -->
-<main class="max-w-6xl mx-auto px-4 py-12">
-  <div class="flex items-center justify-between mb-8">
-    <h2 class="text-2xl font-black text-gray-900">المنتجات</h2>
-    <span id="products-count" class="text-sm text-gray-400"></span>
+<main class="max-w-7xl mx-auto px-4 md:px-6 py-10 md:py-14">
+  <div class="flex flex-wrap items-center justify-between gap-3 mb-7">
+    <div>
+      <h2 class="text-2xl md:text-3xl font-black text-slate-900">المنتجات المختارة</h2>
+      <p class="text-xs md:text-sm text-slate-500 mt-1">اكتشف المجموعة المصممة لتمنح عملاءك انطباعاً لا يُنسى.</p>
+    </div>
+    <span id="products-count" class="text-sm font-semibold text-slate-500"></span>
   </div>
 
-  <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-    <!-- injected by JS -->
-  </div>
+  <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6"></div>
 
-  <div id="no-results" class="hidden text-center py-20 text-gray-400">
+  <div id="no-results" class="hidden text-center py-20 text-slate-400">
     <div class="text-5xl mb-4">🔍</div>
     <p class="font-semibold">لا توجد منتجات مطابقة</p>
   </div>
 </main>
 
-<!-- ── PRODUCT MODAL ── -->
 <div id="product-modal" class="modal-overlay" onclick="closeModalOutside(event)">
-  <div class="bg-white rounded-2xl w-full max-w-xl mx-4 overflow-hidden shadow-2xl animate-up">
-    <div class="relative">
-      <img id="modal-img" src="" alt="" class="w-full h-64 object-cover">
+  <div class="bg-white rounded-3xl w-full max-w-2xl mx-4 overflow-hidden shadow-2xl animate-up border border-slate-200">
+    <div class="relative p-3 md:p-4">
+      <img id="modal-img" src="" alt="" class="w-full h-72 md:h-80 object-cover rounded-2xl">
       <button onclick="closeModal()"
-        class="absolute top-3 left-3 bg-black/40 hover:bg-black/60 text-white
-               w-9 h-9 rounded-xl flex items-center justify-center transition text-lg font-bold">
-        ✕
-      </button>
+        class="absolute top-6 left-6 bg-slate-900/55 hover:bg-slate-900/80 text-white w-10 h-10 rounded-xl flex items-center justify-center transition text-lg font-bold">✕</button>
     </div>
-    <div class="p-6">
+    <div class="p-6 pt-2">
       <div class="flex items-start justify-between gap-3 mb-3">
-        <h3 id="modal-name" class="text-xl font-black text-gray-900"></h3>
-        <div class="stars flex gap-0.5">
-          <span class="star">★</span><span class="star">★</span><span class="star">★</span>
-          <span class="star">★</span><span class="star text-gray-200">★</span>
-        </div>
+        <h3 id="modal-name" class="text-xl md:text-2xl font-black text-slate-900"></h3>
+        <div class="text-amber-400 text-base">★★★★★</div>
       </div>
-      <p id="modal-desc" class="text-gray-500 text-sm leading-relaxed mb-5"></p>
-      <div class="flex items-center justify-between">
+      <p id="modal-desc" class="text-slate-500 text-sm leading-relaxed mb-5"></p>
+      <div class="flex items-center justify-between gap-3">
         <span id="modal-price" class="text-2xl font-black" style="color: var(--primary)"></span>
-        <div class="flex gap-2">
-          <button id="modal-add-btn" onclick="addToCartFromModal()"
-            class="btn-accent font-bold px-5 py-2.5 rounded-xl text-sm">
-            + أضف للسلة
-          </button>
-        </div>
+        <button id="modal-add-btn" onclick="addToCartFromModal()" class="btn-accent font-bold px-6 py-3 rounded-xl text-sm">+ أضف للسلة</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ── CART SIDEBAR ── -->
 <div id="cart-overlay" class="cart-overlay" onclick="closeCart()"></div>
 <aside id="cart-sidebar" class="cart-sidebar flex flex-col">
-  <div class="flex items-center justify-between p-5 border-b border-gray-100">
-    <h2 class="font-black text-lg text-gray-900">سلة التسوق 🛒</h2>
-    <button onclick="closeCart()" class="text-gray-400 hover:text-gray-700 text-xl font-bold transition">✕</button>
+  <div class="flex items-center justify-between p-5 border-b border-slate-200">
+    <h2 class="font-black text-lg text-slate-900">سلة التسوق الفاخرة 🛒</h2>
+    <button onclick="closeCart()" class="text-slate-400 hover:text-slate-700 text-xl font-bold transition">✕</button>
   </div>
 
-  <div id="cart-items" class="flex-1 overflow-y-auto p-5 space-y-4">
-    <!-- cart items -->
-  </div>
+  <div id="cart-items" class="flex-1 overflow-y-auto p-5 space-y-4"></div>
 
-  <div id="cart-empty" class="flex-1 flex flex-col items-center justify-center text-gray-400 p-10 hidden">
+  <div id="cart-empty" class="flex-1 flex flex-col items-center justify-center text-slate-400 p-10 hidden">
     <div class="text-5xl mb-4">🛍️</div>
-    <p class="font-semibold text-center">سلتك فارغة<br><span class="font-normal text-sm">ابدأ بإضافة منتجات</span></p>
+    <p class="font-semibold text-center">سلتك فارغة<br><span class="font-normal text-sm">ابدأ بإضافة منتجاتك المفضلة</span></p>
   </div>
 
-  <div id="cart-footer" class="p-5 border-t border-gray-100 space-y-4 hidden">
+  <div id="cart-footer" class="p-5 border-t border-slate-200 space-y-4 hidden bg-white/80">
     <div class="flex justify-between font-black text-lg">
       <span>الإجمالي</span>
       <span id="cart-total" style="color: var(--primary)"></span>
     </div>
-    <button onclick="checkoutWhatsApp()"
-      class="whatsapp-btn w-full py-3.5 rounded-xl font-bold text-base justify-center">
-      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-      </svg>
+    <button onclick="checkoutWhatsApp()" class="whatsapp-btn w-full py-3.5 rounded-xl font-bold text-base justify-center">
+      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       إتمام الطلب عبر واتساب
     </button>
-    <button onclick="clearCart()" class="w-full py-2.5 rounded-xl border border-gray-200 text-sm text-gray-500 hover:bg-gray-50 transition font-semibold">
-      إفراغ السلة
-    </button>
+    <button onclick="clearCart()" class="w-full py-2.5 rounded-xl border border-slate-200 text-sm text-slate-500 hover:bg-slate-50 transition font-semibold">إفراغ السلة</button>
   </div>
 </aside>
 
-<!-- ── FOOTER ── -->
-<footer class="mt-20 py-10 border-t border-gray-100 text-center">
+<footer class="mt-10 py-10 text-center border-t border-white/65 bg-white/45 backdrop-blur">
   <p class="font-black text-lg mb-1" style="color: var(--primary)">__STORE_NAME__</p>
-  <p class="text-gray-400 text-sm">جميع الحقوق محفوظة © 2024 — متجر مبني بـ Static E-com Manager</p>
+  <p class="text-slate-500 text-sm">All rights reserved © 2026 — Premium storefront by Static E-com Manager v2.0</p>
 </footer>
 
-<!-- ── DATA & LOGIC ── -->
 <script>
 const STORE_CONFIG = {
   name: "__STORE_NAME__",
@@ -277,7 +342,6 @@ const PRODUCTS = __PRODUCTS_JSON__;
 let cart = JSON.parse(localStorage.getItem('cart_data') || '[]');
 let currentModalProduct = null;
 
-// ── RENDER PRODUCTS ──
 function renderProducts(list) {
   const grid = document.getElementById('products-grid');
   const noRes = document.getElementById('no-results');
@@ -289,53 +353,48 @@ function renderProducts(list) {
     count.textContent = '';
     return;
   }
+
   noRes.classList.add('hidden');
   count.textContent = `${list.length} منتج`;
 
   grid.innerHTML = list.map((p, i) => `
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden card-hover cursor-pointer animate-up"
-      style="animation-delay: ${i * 60}ms"
-      onclick="openModal(${p.id})">
-      <img src="${p.image}" alt="${p.name}"
-        class="product-img"
-        onerror="this.src='https://placehold.co/400x400/f3f4f6/9ca3af?text=📦'">
-      <div class="p-4">
-        <h3 class="font-bold text-gray-900 text-sm leading-snug mb-1 line-clamp-2">${p.name}</h3>
-        <p class="text-xs text-gray-400 line-clamp-2 mb-3 leading-relaxed">${p.description}</p>
-        <div class="flex items-center justify-between gap-2">
-          <span class="font-black text-base" style="color:var(--primary)">${p.price} ${STORE_CONFIG.currency}</span>
-          <button onclick="event.stopPropagation(); quickAdd(${p.id})"
-            class="btn-accent text-xs font-bold px-3 py-1.5 rounded-lg whitespace-nowrap">
-            + سلة
-          </button>
+    <article class="product-card rounded-3xl p-3 animate-up cursor-pointer" style="animation-delay:${i * 65}ms" onclick="openModal(${p.id})">
+      <img src="${p.image}" alt="${p.name}" class="product-img"
+        onerror="this.src='https://placehold.co/600x600/f1f5f9/94a3b8?text=📦'">
+      <div class="p-2 pt-4">
+        <h3 class="font-extrabold text-slate-900 text-sm md:text-base line-clamp-2">${p.name}</h3>
+        <p class="text-xs text-slate-500 line-clamp-2 mt-2 leading-relaxed">${p.description}</p>
+        <div class="flex items-center justify-between gap-2 mt-4">
+          <span class="font-black text-base md:text-lg" style="color:var(--primary)">${p.price} ${STORE_CONFIG.currency}</span>
+          <button onclick="event.stopPropagation(); quickAdd(${p.id})" class="btn-accent text-xs font-bold px-3.5 py-2 rounded-xl whitespace-nowrap">+ سلة</button>
         </div>
       </div>
-    </div>
+    </article>
   `).join('');
 }
 
-// ── MODAL ──
 function openModal(id) {
   const p = PRODUCTS.find(x => x.id === id);
   if (!p) return;
   currentModalProduct = p;
   document.getElementById('modal-img').src = p.image;
-  document.getElementById('modal-img').onerror = function() {
-    this.src = 'https://placehold.co/600x400/f3f4f6/9ca3af?text=📦';
-  };
+  document.getElementById('modal-img').onerror = function() { this.src = 'https://placehold.co/800x600/f1f5f9/94a3b8?text=📦'; };
   document.getElementById('modal-name').textContent = p.name;
   document.getElementById('modal-desc').textContent = p.description;
   document.getElementById('modal-price').textContent = `${p.price} ${STORE_CONFIG.currency}`;
   document.getElementById('product-modal').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
+
 function closeModal() {
   document.getElementById('product-modal').classList.remove('open');
   document.body.style.overflow = '';
 }
+
 function closeModalOutside(e) {
   if (e.target.id === 'product-modal') closeModal();
 }
+
 function addToCartFromModal() {
   if (currentModalProduct) {
     addToCart(currentModalProduct.id);
@@ -343,45 +402,55 @@ function addToCartFromModal() {
   }
 }
 
-// ── CART ──
 function addToCart(id) {
   const p = PRODUCTS.find(x => x.id === id);
   if (!p) return;
   const existing = cart.find(x => x.id === id);
-  if (existing) {
-    existing.qty++;
-  } else {
-    cart.push({ id, name: p.name, price: p.price, image: p.image, qty: 1 });
-  }
+  if (existing) existing.qty++;
+  else cart.push({ id, name: p.name, price: p.price, image: p.image, qty: 1 });
+
   saveCart();
   updateCartUI();
   showToast(`✅ أُضيف: ${p.name}`);
 }
+
 function quickAdd(id) { addToCart(id); }
 
 function removeFromCart(id) {
   cart = cart.filter(x => x.id !== id);
-  saveCart(); updateCartUI(); renderCartItems();
+  saveCart();
+  updateCartUI();
+  renderCartItems();
 }
+
 function changeQty(id, delta) {
   const item = cart.find(x => x.id === id);
   if (!item) return;
   item.qty += delta;
   if (item.qty <= 0) removeFromCart(id);
-  else { saveCart(); updateCartUI(); renderCartItems(); }
+  else {
+    saveCart();
+    updateCartUI();
+    renderCartItems();
+  }
 }
+
 function clearCart() {
-  cart = []; saveCart(); updateCartUI(); renderCartItems();
+  cart = [];
+  saveCart();
+  updateCartUI();
+  renderCartItems();
 }
-function saveCart() {
-  localStorage.setItem('cart_data', JSON.stringify(cart));
-}
+
+function saveCart() { localStorage.setItem('cart_data', JSON.stringify(cart)); }
+
 function updateCartUI() {
-  const total = cart.reduce((s, x) => s + x.qty, 0);
+  const total = cart.reduce((sum, x) => sum + x.qty, 0);
   const badge = document.getElementById('cart-count');
   badge.textContent = total;
   total > 0 ? badge.classList.remove('hidden') : badge.classList.add('hidden');
 }
+
 function renderCartItems() {
   const container = document.getElementById('cart-items');
   const empty = document.getElementById('cart-empty');
@@ -394,20 +463,20 @@ function renderCartItems() {
     footer.classList.add('hidden');
     return;
   }
+
   container.classList.remove('hidden');
   empty.classList.add('hidden');
   footer.classList.remove('hidden');
 
-  const total = cart.reduce((s, x) => s + x.price * x.qty, 0);
+  const total = cart.reduce((sum, x) => sum + x.price * x.qty, 0);
   totalEl.textContent = `${total.toFixed(2)} ${STORE_CONFIG.currency}`;
 
   container.innerHTML = cart.map(item => `
-    <div class="flex gap-3 items-center bg-gray-50 rounded-2xl p-3">
-      <img src="${item.image}" alt="${item.name}"
-        class="w-16 h-16 rounded-xl object-cover flex-shrink-0"
-        onerror="this.src='https://placehold.co/100x100/f3f4f6/9ca3af?text=📦'">
+    <div class="flex gap-3 items-center bg-white border border-slate-200 rounded-2xl p-3">
+      <img src="${item.image}" alt="${item.name}" class="w-16 h-16 rounded-xl object-cover flex-shrink-0"
+        onerror="this.src='https://placehold.co/100x100/f1f5f9/94a3b8?text=📦'">
       <div class="flex-1 min-w-0">
-        <p class="font-bold text-sm text-gray-900 leading-snug mb-1 truncate">${item.name}</p>
+        <p class="font-bold text-sm text-slate-900 leading-snug mb-1 truncate">${item.name}</p>
         <p class="text-xs font-black" style="color:var(--primary)">${(item.price * item.qty).toFixed(2)} ${STORE_CONFIG.currency}</p>
       </div>
       <div class="flex flex-col items-center gap-1.5 flex-shrink-0">
@@ -416,27 +485,28 @@ function renderCartItems() {
           <span class="w-6 text-center font-bold text-sm">${item.qty}</span>
           <span class="qty-btn" onclick="changeQty(${item.id}, 1)">+</span>
         </div>
-        <button onclick="removeFromCart(${item.id})" class="text-xs text-red-400 hover:text-red-600 transition">حذف</button>
+        <button onclick="removeFromCart(${item.id})" class="text-xs text-rose-400 hover:text-rose-600 transition">حذف</button>
       </div>
     </div>
   `).join('');
 }
+
 function openCart() {
   renderCartItems();
   document.getElementById('cart-sidebar').classList.add('open');
   document.getElementById('cart-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
+
 function closeCart() {
   document.getElementById('cart-sidebar').classList.remove('open');
   document.getElementById('cart-overlay').classList.remove('open');
   document.body.style.overflow = '';
 }
 
-// ── WHATSAPP CHECKOUT ──
 function checkoutWhatsApp() {
   if (!cart.length) return;
-  const total = cart.reduce((s, x) => s + x.price * x.qty, 0);
+  const total = cart.reduce((sum, x) => sum + x.price * x.qty, 0);
   let msg = `🛒 *طلب جديد من ${STORE_CONFIG.name}*\n\n`;
   cart.forEach(item => {
     msg += `• ${item.name} × ${item.qty} — ${(item.price * item.qty).toFixed(2)} ${STORE_CONFIG.currency}\n`;
@@ -446,26 +516,34 @@ function checkoutWhatsApp() {
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
-// ── SEARCH ──
-document.getElementById('search-input').addEventListener('input', function() {
-  const q = this.value.trim().toLowerCase();
-  const filtered = q ? PRODUCTS.filter(p =>
-    p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q)
+function handleSearch(q) {
+  const query = q.trim().toLowerCase();
+  const filtered = query ? PRODUCTS.filter(p =>
+    p.name.toLowerCase().includes(query) || p.description.toLowerCase().includes(query)
   ) : PRODUCTS;
   renderProducts(filtered);
+}
+
+document.getElementById('search-input').addEventListener('input', function() {
+  handleSearch(this.value);
+  const mobile = document.getElementById('search-input-mobile');
+  if (mobile) mobile.value = this.value;
 });
 
-// ── TOAST ──
+document.getElementById('search-input-mobile')?.addEventListener('input', function() {
+  handleSearch(this.value);
+  document.getElementById('search-input').value = this.value;
+});
+
 function showToast(msg) {
   const t = document.createElement('div');
   t.className = 'fixed bottom-6 right-6 z-[9999] text-white text-sm font-bold px-5 py-3 rounded-2xl shadow-xl animate-up';
-  t.style.background = 'var(--primary)';
+  t.style.background = 'linear-gradient(135deg, var(--primary), var(--accent))';
   t.textContent = msg;
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 2200);
 }
 
-// ── INIT ──
 renderProducts(PRODUCTS);
 updateCartUI();
 </script>
