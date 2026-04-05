@@ -196,7 +196,11 @@
       <div class="relative w-full">
         <input id="search-input" type="text" placeholder="ابحث عن منتج، فئة، أو وصف..."
           class="w-full bg-white/85 border border-slate-200 rounded-2xl ps-12 pe-4 py-3 text-sm focus:outline-none focus:border-slate-400 shadow-sm">
+ codex/build-professional-version-2.0-3ygztp
+        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></span>
+
         <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">🔎</span>
+ main
       </div>
     </div>
 
@@ -222,12 +226,25 @@
 
     <div class="relative z-10 grid md:grid-cols-12 gap-8 items-center">
       <div class="md:col-span-7 space-y-4">
+ codex/build-professional-version-2.0-3ygztp
+        <span class="hero-chip inline-flex px-4 py-1.5 rounded-full text-xs font-bold tracking-wide">Premium Experience</span>
+
         <span class="hero-chip inline-flex px-4 py-1.5 rounded-full text-xs font-bold tracking-wide">v2.0 Premium Experience</span>
+ main
         <h2 class="text-3xl md:text-5xl font-black leading-tight text-slate-900">
           تجربة تسوّق عالمية<br>
           بطابع فاخر لـ <span style="color: var(--primary)">__STORE_NAME__</span>
         </h2>
         <p class="text-slate-600 leading-relaxed max-w-2xl text-sm md:text-base">
+ codex/build-professional-version-2.0-3ygztp
+          __STORE_NAME__ متجر إلكتروني احترافي يقدّم تجربة تسوق أنيقة وسريعة،
+          مع عرض واضح للمنتجات وخطوات شراء سهلة تعزّز ثقة العملاء.
+        </p>
+        <div class="flex flex-wrap items-center gap-3 pt-2">
+          <span class="stat-badge rounded-xl px-3 py-2 text-xs font-bold text-slate-700">شحن سريع</span>
+          <span class="stat-badge rounded-xl px-3 py-2 text-xs font-bold text-slate-700">تجربة آمنة</span>
+          <span class="stat-badge rounded-xl px-3 py-2 text-xs font-bold text-slate-700">جاهز للتوسع العالمي</span>
+
           تصميم أنيق، تجربة سريعة، وسلة ذكية تحفظ اختيارات عملائك لحظة بلحظة.
           تم بناء هذه الواجهة لتنافس أحدث المتاجر العالمية بدون تعقيد.
         </p>
@@ -235,6 +252,7 @@
           <span class="stat-badge rounded-xl px-3 py-2 text-xs font-bold text-slate-700">⚡ شحن مرئي سريع</span>
           <span class="stat-badge rounded-xl px-3 py-2 text-xs font-bold text-slate-700">🔒 تجربة آمنة</span>
           <span class="stat-badge rounded-xl px-3 py-2 text-xs font-bold text-slate-700">🌍 جاهز للتوسع العالمي</span>
+ main
         </div>
       </div>
       <div class="md:col-span-5">
@@ -301,14 +319,22 @@
 <div id="cart-overlay" class="cart-overlay" onclick="closeCart()"></div>
 <aside id="cart-sidebar" class="cart-sidebar flex flex-col">
   <div class="flex items-center justify-between p-5 border-b border-slate-200">
+ codex/build-professional-version-2.0-3ygztp
+    <h2 class="font-black text-lg text-slate-900">سلة التسوق</h2>
+
     <h2 class="font-black text-lg text-slate-900">سلة التسوق الفاخرة 🛒</h2>
+ main
     <button onclick="closeCart()" class="text-slate-400 hover:text-slate-700 text-xl font-bold transition">✕</button>
   </div>
 
   <div id="cart-items" class="flex-1 overflow-y-auto p-5 space-y-4"></div>
 
   <div id="cart-empty" class="flex-1 flex flex-col items-center justify-center text-slate-400 p-10 hidden">
+ codex/build-professional-version-2.0-3ygztp
+    <div class="text-5xl mb-4"></div>
+
     <div class="text-5xl mb-4">🛍️</div>
+ main
     <p class="font-semibold text-center">سلتك فارغة<br><span class="font-normal text-sm">ابدأ بإضافة منتجاتك المفضلة</span></p>
   </div>
 
@@ -360,7 +386,11 @@ function renderProducts(list) {
   grid.innerHTML = list.map((p, i) => `
     <article class="product-card rounded-3xl p-3 animate-up cursor-pointer" style="animation-delay:${i * 65}ms" onclick="openModal(${p.id})">
       <img src="${p.image}" alt="${p.name}" class="product-img"
+ codex/build-professional-version-2.0-3ygztp
+        onerror="this.src='https://placehold.co/600x600/f1f5f9/94a3b8?text=Product'">
+
         onerror="this.src='https://placehold.co/600x600/f1f5f9/94a3b8?text=📦'">
+ main
       <div class="p-2 pt-4">
         <h3 class="font-extrabold text-slate-900 text-sm md:text-base line-clamp-2">${p.name}</h3>
         <p class="text-xs text-slate-500 line-clamp-2 mt-2 leading-relaxed">${p.description}</p>
@@ -378,7 +408,11 @@ function openModal(id) {
   if (!p) return;
   currentModalProduct = p;
   document.getElementById('modal-img').src = p.image;
+ codex/build-professional-version-2.0-3ygztp
+  document.getElementById('modal-img').onerror = function() { this.src = 'https://placehold.co/800x600/f1f5f9/94a3b8?text=Product'; };
+
   document.getElementById('modal-img').onerror = function() { this.src = 'https://placehold.co/800x600/f1f5f9/94a3b8?text=📦'; };
+ main
   document.getElementById('modal-name').textContent = p.name;
   document.getElementById('modal-desc').textContent = p.description;
   document.getElementById('modal-price').textContent = `${p.price} ${STORE_CONFIG.currency}`;
@@ -411,7 +445,7 @@ function addToCart(id) {
 
   saveCart();
   updateCartUI();
-  showToast(`✅ أُضيف: ${p.name}`);
+  showToast(`تمت إضافة المنتج: ${p.name}`);
 }
 
 function quickAdd(id) { addToCart(id); }
@@ -474,7 +508,11 @@ function renderCartItems() {
   container.innerHTML = cart.map(item => `
     <div class="flex gap-3 items-center bg-white border border-slate-200 rounded-2xl p-3">
       <img src="${item.image}" alt="${item.name}" class="w-16 h-16 rounded-xl object-cover flex-shrink-0"
+ codex/build-professional-version-2.0-3ygztp
+        onerror="this.src='https://placehold.co/100x100/f1f5f9/94a3b8?text=Product'">
+
         onerror="this.src='https://placehold.co/100x100/f1f5f9/94a3b8?text=📦'">
+ main
       <div class="flex-1 min-w-0">
         <p class="font-bold text-sm text-slate-900 leading-snug mb-1 truncate">${item.name}</p>
         <p class="text-xs font-black" style="color:var(--primary)">${(item.price * item.qty).toFixed(2)} ${STORE_CONFIG.currency}</p>
@@ -507,11 +545,15 @@ function closeCart() {
 function checkoutWhatsApp() {
   if (!cart.length) return;
   const total = cart.reduce((sum, x) => sum + x.price * x.qty, 0);
+ codex/build-professional-version-2.0-3ygztp
+  let msg = `طلب جديد من ${STORE_CONFIG.name}\n\n`;
+
   let msg = `🛒 *طلب جديد من ${STORE_CONFIG.name}*\n\n`;
+ main
   cart.forEach(item => {
     msg += `• ${item.name} × ${item.qty} — ${(item.price * item.qty).toFixed(2)} ${STORE_CONFIG.currency}\n`;
   });
-  msg += `\n💰 *الإجمالي: ${total.toFixed(2)} ${STORE_CONFIG.currency}*\n\nأرجو تأكيد الطلب، شكراً! 🙏`;
+  msg += `\nالإجمالي: ${total.toFixed(2)} ${STORE_CONFIG.currency}\n\nنرجو تأكيد الطلب. شكراً لكم.`;
   const phone = STORE_CONFIG.whatsapp.replace(/[^0-9]/g, '');
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
 }
